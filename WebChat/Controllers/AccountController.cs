@@ -2,13 +2,13 @@
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using WebChat.Classes.Db.Structure;
+using WebChat.Classes.DB.Repositories;
 using WebChat.Models;
 using WebChat.Models.Account;
 
@@ -32,20 +32,18 @@ namespace WebChat.Controllers
             }
         }
 
-
         [HttpGet]
         public ActionResult Signup()
         {
             return View();
         }
 
-
         [HttpPost]
         public async Task<ActionResult> Signup(SignUpModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser() { Email = model.Email, UserName = model.Name };
+                var user = new DbUser() { Email = model.Email, UserName = model.Name };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                     return RedirectToAction("SignIn", "Account");
@@ -97,6 +95,22 @@ namespace WebChat.Controllers
         {
             AuthenticationManager.SignOut();
             return RedirectToAction("SignIn");
+        }
+
+
+        public ActionResult FindUsers(string searchedString)
+        {
+            using (var context = new DbContext())
+            {
+                var repository = new UserRepository(context);
+                var dbUsers = repository.SearchFor(e => e.UserName.Contains(searchedString)).ToList();
+                var model = new SearchedContactListModel();
+                foreach (var dbUser in dbUsers)
+                {
+                    model.Contacts.Add(new SearchedContactModel() { Id = dbUser.Id, Name = dbUser.UserName, PhotoUrl = dbUser.PhotoUrl });
+                }
+                return PartialView(model);
+            }
         }
     }
 }

@@ -1,30 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Microsoft.AspNet.Identity;
 using System.Web.Mvc;
+using WebChat.Classes.Db.Structure;
+using WebChat.Classes.Worker;
+using WebChat.Models.Contact;
 
 namespace WebChat.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            using (var context = new DbContext())
+            {
+                ContactWorker contactWorker = new ContactWorker(context);
+                ContactListModel model = contactWorker.GetContacts(User.Identity.GetUserId());
+                return View(model);
+            }
         }
     }
 }

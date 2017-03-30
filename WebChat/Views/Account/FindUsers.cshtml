@@ -1,0 +1,19 @@
+﻿@model WebChat.Models.Account.SearchedContactListModel
+@{ Layout = null; }
+
+@if (Model == null)
+{
+    return;
+}
+
+@foreach (var contact in Model.Contacts)
+{
+    <div class="row user-contact" data-contact-id="@contact.Id" data-contact-name="@contact.Name" onclick="AddContact(this)">
+        <div class="col-md-2 contact-icon"><img src="~/Content/Images/avatar-1.png" class="avatar" /></div>
+        <div class="col-md-10 contact-name"><span class="contact-name-text">@contact.Name</span></div>
+        <hr />
+    </div>
+}
+
+
+

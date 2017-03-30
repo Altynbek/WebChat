@@ -1,0 +1,28 @@
+﻿
+@{
+    Layout = null;
+}
+@model WebChat.Models.Contact.NewContactModel
+
+@Scripts.Render("~/bundles/jqueryval")
+
+@using (Ajax.BeginForm("AddNewContact", "Contact", new AjaxOptions() { HttpMethod = "post", OnSuccess = "CheckResult"}))
+{
+    {
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <img src="~/Content/Images/avatar-1.png" class="avatar" style="width:40px; height: 40px" />
+            <h3 style="display: inline-block">@Model.ContactName</h3>
+        </div>
+        <hr />
+
+        <h5>This contact doesn't contains in you contact book yet</h5>
+        @Html.Hidden("ContactName", Model.ContactName)
+        @Html.Hidden("ContactId", Model.ContactId)
+
+        <div class="row" style="margin-top:50px;">
+            <input type="submit" value="Add to fiends" class="btn btn-info" style="display: block; margin: 0px auto;" />
+        </div>
+    }
+
+}

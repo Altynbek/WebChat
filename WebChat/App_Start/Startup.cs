@@ -2,9 +2,9 @@
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
-using WebChat.Models;
 using WebChat.App_Start;
-
+using WebChat.Classes.Db.Structure;
+using WebChat.Models;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace WebChat.App_Start
@@ -13,7 +13,7 @@ namespace WebChat.App_Start
     {
         public void Configuration(IAppBuilder app)
         {
-            app.CreatePerOwinContext<ApplicationContext>(ApplicationContext.Create);
+            app.CreatePerOwinContext<DbContext>(DbContext.Create);
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {

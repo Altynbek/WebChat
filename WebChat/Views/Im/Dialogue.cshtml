@@ -1,0 +1,88 @@
+﻿@model WebChat.Models.Im.DialogueInfoModel
+@using Microsoft.AspNet.Identity;
+@Scripts.Render("~/bundles/autosize")
+@{
+    Layout = null;
+}
+
+
+<div class="row">
+    <img src="@Model.PhotoUrl" class="avatar" style="width:40px; height: 40px" />
+    <h3 style="display: inline-block">@Model.Name</h3>
+</div>
+<hr />
+
+@if (!Model.IsContactConfirmed)
+{
+    if (User.Identity.GetUserId() == Model.FriendsheepInitiator)
+    {
+        <h5>You can't send a message to this user unil he will approve your invitation</h5>
+    }
+    else
+    {
+        <h5>The User @Model.Name want to add you to his contact book</h5>
+        <div class="row" style="margin-top:50px;">
+            <input type="button" class="btn btn-info" value="Accept" onclick="AcceptContact('@Model.CompanionId')" />
+            <input type="button" class="btn btn-danger" value="Decline" onclick="DeclineContact('@Model.CompanionId')" />
+        </div>
+    }
+
+}
+else
+{
+    <div id="message-list"></div>
+    <textarea id="message-box" class="form-control" style='max-height: 200px'></textarea>
+}
+
+<script>
+    autosize(document.querySelectorAll('textarea'));
+
+    $(document).keypress(function (e) {
+        if ($(e.target).is('textarea')) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                ProcessMessage();
+            }
+        }
+    });
+
+    function ClearMessageBox() {
+        $('#message-box').val("");
+        autosize.update(document.querySelector('textarea'));
+    }
+
+    function ProcessMessage() {
+        var dialogueId = null;          // dialog еще не создан
+        var message = $('#message-box').val();
+        var companionId = "jsdklf";
+
+        if (!message)
+            return;
+
+        $.ajax({
+            url: "/Im/SendMessage",
+            data: { "dialogueId": dialogueId, "companionId": companionId, "message": message },
+            type: "post",
+            success: function (result) {
+                PushMessage(result);
+                ClearMessageBox();
+            }
+        });
+    }
+
+
+    
+    function PushMessage(message) {
+        const messageList = document.getElementById('message-list');
+        var shouldScroll = messageList.scrollTop + messageList.clientHeight === messageList.scrollHeight;
+
+        $('#message-list').append(message)
+        if (shouldScroll) {
+            scrollToBottom(messageList);
+        }
+    }
+
+    function scrollToBottom(messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+</script>

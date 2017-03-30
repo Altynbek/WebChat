@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace WebChat.Models.Im
+﻿namespace WebChat.Models.Im
 {
-    public class DialogueModel
+    public class DialogueInfoModel
     {
-        public string Name { get; set; }
+        public string DialogueId { get; set; }         // from userdialogue
 
-        public string ShortMessage { get; set; }
+        public string Name { get; set; }                // if (isMulty) -> dbDialogue, else from dbUserDialogue
 
-        public string PhotoUrl { get; set; }
+        public string ShortMessage { get; set; }       // from message
 
-        public string RecentActivityDate { get; set; }
+        public string PhotoUrl { get; set; }           // if(isMulty)->dbDialogue, else from aspnetUser
+
+        public string RecentActivityDate { get; set; }  // from dbDialogue
+
+        public bool IsContactConfirmed { get; set; }    // from dbUserContact
+
+        public string FriendsheepInitiator { get; set; } // from dbUserContact
+
+        public string CompanionId { get; set; }
     }
 }

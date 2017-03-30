@@ -7,6 +7,6 @@ namespace WebChat.Models.Im
 {
     public class DialogueListModel
     {
-        public List<DialogueModel> Dialogues { get; set; }
+        public List<DialogueInfoModel> Dialogues { get; set; }
     }
 }

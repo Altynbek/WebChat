@@ -1,0 +1,15 @@
+﻿@model WebChat.Models.Im.MessageModel
+
+@if(Model == null)
+{
+    return;
+}
+
+<div>
+    <dl>
+        <dt>@Model.SenderName (@Model.SendTime)</dt>
+        <dd>
+            @Model.message
+        </dd>
+    </dl>
+</div>

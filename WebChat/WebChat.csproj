@@ -193,33 +193,91 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
-    <Compile Include="Classes\DbDialogue.cs" />
-    <Compile Include="Classes\IRepository.cs" />
-    <Compile Include="Classes\Repository.cs" />
+    <Compile Include="Classes\DB\Repositories\DialogueRepository.cs" />
+    <Compile Include="Classes\DB\Repositories\UserDialogueRepository.cs" />
+    <Compile Include="Classes\DB\Repositories\ContactRepository.cs" />
+    <Compile Include="Classes\DB\Structure\DbUserContact.cs" />
+    <Compile Include="Classes\DB\Structure\DbDialogue.cs" />
+    <Compile Include="Classes\DB\Structure\DbMessage.cs" />
+    <Compile Include="Classes\DB\Structure\DbUserDialogue.cs" />
+    <Compile Include="Classes\DB\Repositories\UserRepository.cs" />
+    <Compile Include="Classes\DB\Repositories\IRepository.cs" />
+    <Compile Include="Classes\Exceptions\UserNotFoundException.cs" />
+    <Compile Include="Classes\Worker\DialogueWorker.cs" />
+    <Compile Include="Classes\Worker\ContactWorker.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ContactController.cs" />
     <Compile Include="Controllers\ImController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703260856375_UpdateDataBaseStructure.cs" />
+    <Compile Include="Migrations\201703260856375_UpdateDataBaseStructure.Designer.cs">
+      <DependentUpon>201703260856375_UpdateDataBaseStructure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703261700410_AddUserPhotoColumn.cs" />
+    <Compile Include="Migrations\201703261700410_AddUserPhotoColumn.Designer.cs">
+      <DependentUpon>201703261700410_AddUserPhotoColumn.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703270904031_AddContactClaimsTable.cs" />
+    <Compile Include="Migrations\201703270904031_AddContactClaimsTable.Designer.cs">
+      <DependentUpon>201703270904031_AddContactClaimsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703271058062_UpdateUserContactTable.cs" />
+    <Compile Include="Migrations\201703271058062_UpdateUserContactTable.Designer.cs">
+      <DependentUpon>201703271058062_UpdateUserContactTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703271124320_DropDbClaimsTable.cs" />
+    <Compile Include="Migrations\201703271124320_DropDbClaimsTable.Designer.cs">
+      <DependentUpon>201703271124320_DropDbClaimsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703281247392_AddFriendsheepInitiatorColumnToContactTable.cs" />
+    <Compile Include="Migrations\201703281247392_AddFriendsheepInitiatorColumnToContactTable.Designer.cs">
+      <DependentUpon>201703281247392_AddFriendsheepInitiatorColumnToContactTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703281720539_AddHashCodeColumnToUserDialogueTable.cs" />
+    <Compile Include="Migrations\201703281720539_AddHashCodeColumnToUserDialogueTable.Designer.cs">
+      <DependentUpon>201703281720539_AddHashCodeColumnToUserDialogueTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\Account\SearchedContactListModel.cs" />
+    <Compile Include="Models\Account\SearchedContactModel.cs" />
     <Compile Include="Models\Account\SignInModel.cs" />
     <Compile Include="Models\Account\SignUpModel.cs" />
-    <Compile Include="Models\ApplicationContext.cs" />
-    <Compile Include="Models\ApplicationUser .cs" />
+    <Compile Include="Classes\DB\Structure\DbContext.cs" />
+    <Compile Include="Classes\DB\Structure\DbUser .cs" />
     <Compile Include="Models\ApplicationUserManager.cs" />
+    <Compile Include="Models\Contact\NewContactModel.cs" />
+    <Compile Include="Models\Contact\ContactListModel.cs" />
+    <Compile Include="Models\Contact\ContactModel.cs" />
     <Compile Include="Models\Im\DialogueModel.cs" />
     <Compile Include="Models\Im\DialogueListModel.cs" />
+    <Compile Include="Models\Im\MessageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\avatar-1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\avatar-2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\Images\avatar-3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Content\Site.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Scripts\ai.0.15.0-build58334.js" />
     <Content Include="Scripts\ai.0.15.0-build58334.min.js" />
+    <Content Include="Scripts\autosize.js" />
+    <Content Include="Scripts\autosize.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -229,6 +287,8 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -249,14 +309,19 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
+    <Content Include="Views\Home\ContactList.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\SignUp.cshtml" />
     <Content Include="Views\Account\SignIn.cshtml" />
     <Content Include="Views\Shared\_SignInPartial.cshtml" />
+    <Content Include="Views\Account\FindUsers.cshtml" />
+    <Content Include="Views\Contact\AddNewContactToBook.cshtml" />
+    <Content Include="Views\Im\Dialogue.cshtml" />
+    <Content Include="Views\Im\Message.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Home\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -265,6 +330,29 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201703260856375_UpdateDataBaseStructure.resx">
+      <DependentUpon>201703260856375_UpdateDataBaseStructure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703261700410_AddUserPhotoColumn.resx">
+      <DependentUpon>201703261700410_AddUserPhotoColumn.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703270904031_AddContactClaimsTable.resx">
+      <DependentUpon>201703270904031_AddContactClaimsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703271058062_UpdateUserContactTable.resx">
+      <DependentUpon>201703271058062_UpdateUserContactTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703271124320_DropDbClaimsTable.resx">
+      <DependentUpon>201703271124320_DropDbClaimsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703281247392_AddFriendsheepInitiatorColumnToContactTable.resx">
+      <DependentUpon>201703281247392_AddFriendsheepInitiatorColumnToContactTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703281720539_AddHashCodeColumnToUserDialogueTable.resx">
+      <DependentUpon>201703281720539_AddHashCodeColumnToUserDialogueTable.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

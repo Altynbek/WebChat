@@ -2,21 +2,237 @@
     ViewBag.Title = "Im";
 }
 
-@model WebChat.Models.Im.DialogueListModel
+@model WebChat.Models.Contact.ContactListModel
 
 <div class="header-whitespace" style="height: 20px;"></div>
 <div class="row">
     <div class="col-md-offset-1 col-md-10">
         <div class="row">
-            <div class="col-md-4" style="background-color: aqua;">
+            <div class="col-md-4">
                 <div class="form-group" style="padding-top: 15px;">
                     <div class="input-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
                         <input type="text" class="form-control" id="inputSearchField" placeholder="Search">
                     </div>
+                    <div id="contact-list">
+                        @Html.Partial("ContactList", Model)
+                    </div>
                 </div>
+                <input type="button" id="btnCommonSearch" class="btn btn-info hidden centered" value="Search in WebChat" />
+                <div id="search-result-container"></div>
             </div>
-            <div class="col-md-8" style="background-color: aquamarine; height: 200px;"></div>
+            <div class="col-md-8" id="dialogue-container"></div>
         </div>
     </div>
 </div>
+
+<script>
+    $("#inputSearchField").on('change keyup paste', function () {
+        var searchPattern = $(this).val();
+        if (!searchPattern) {
+            $('#btnCommonSearch').addClass('hidden');
+            $(".user-contact").removeClass('hidden');
+        }
+        else {
+            $('#btnCommonSearch').removeClass('hidden');
+            FilterContactsBy(searchPattern);
+        }
+    });
+
+    $("#inputSearchField").keypress(function (e) {
+        if (e.keyCode == 13) {
+            FindUser()
+        }
+    });
+
+    $("#btnCommonSearch").click(function () {
+        FindUser();
+    });
+
+    function FilterContactsBy(pattern) {
+        $(".user-contact:not([data-contact-name*='" + pattern + "' i])").addClass('hidden');
+        $(".user-contact[data-contact-name*='" + pattern + "' i]").removeClass('hidden');
+    }
+
+    function FindUser() {
+        var searchedString = $("#inputSearchField").val();
+        if (searchedString != undefined && searchedString.length > 0) {
+            $.ajax({
+                url: "/Account/FindUsers",
+                data: { "searchedString": searchedString },
+                success: function (result) {
+                    $('#search-result-container').html(result);
+                }
+            });
+        }
+    }
+
+    function AddContact(contactRow) {
+        if (!$(contactRow).hasClass("contact-selected")) {
+            $(contactRow).addClass("contact-selected");
+        }
+
+        var contactId = $(contactRow).data("contact-id");
+        var contactName = $(contactRow).data("contact-name");
+        $.ajax({
+            url: "/Contact/AddNewContact",
+            data: { "contactId": contactId, "contactName": contactName },
+            success: function (result) {
+                $('#dialogue-container').html(result);
+            }
+        });
+    }
+
+    function StartDialogue(contactRow) {
+        $('.contact-selected').removeClass('contact-selected');
+        if (!$(contactRow).hasClass("contact-selected")) {
+            $(contactRow).addClass("contact-selected");
+        }
+
+        var contactId = $(contactRow).data("contact-id");
+        var contactName = $(contactRow).data("contact-name");
+        var isConfirmed = $(contactRow).data("confirmed");
+
+        $.ajax({
+            url: "/Im/Index",
+            data: { "contactId": contactId, "contactName": contactName, "confirmed": isConfirmed },
+            success: function (result) {
+                $('#dialogue-container').html(result);
+            }
+        });
+    }
+
+    function CheckResult(result) {
+        if (result != undefined && result.success) {
+            $('#dialogue-container').empty();
+            ShowAlert("success", "This user added to your contact book. Please wait until this user will confirm your invitation", 'dialogue-container');
+            // добавить контакт в контактную книгу
+        }
+        else {
+            ShowAlert("Error", "Unfortunately we could not proceed your request. Please, try again later! ", 'dialogue-container');
+        }
+    }
+
+    function ShowAlert(alertType, message, containerId) {
+        var panelType = "";
+        if (alertType == "success") {
+            panelType = "panel-success";
+        }
+        else if (alertType == "error") {
+            panelType = "panel-danger";
+        }
+        else if (alertType == "warning") {
+            panelType = "panel-warning";
+        }
+        else if (alertType == "info") {
+            panelType = "panel-info";
+        }
+        var htmlMarkup = '<div class="panel ' + panelType + '" id="notification"><div class="panel-heading">' + message + '</div></div>';
+        $('#' + containerId).html(htmlMarkup);
+        setTimeout(function () {
+            $('#notification').remove();
+        }, 5000)
+    }
+
+    function DeclineContact(companionId) {
+        $.ajax({
+            url: "/Contact/DeleteContact",
+            data: { "companionId": companionId },
+            type: "post",
+            success: function (result) {
+                $('#dialogue-container').empty();
+                $('.user-contact').removeClass('contact-selected');
+            }
+        });
+    }
+
+    function AcceptContact(companionId) {
+        $.ajax({
+            url: "/Contact/AcceptContact",
+            data: { "companionId": companionId },
+            type: "post",
+            success: function (result) {
+                CheckResult(result);
+            }
+        });
+    }
+
+</script>
+
+
+<style>
+    .centered {
+        margin: 0px auto;
+        display: block;
+    }
+
+    #btnCommonSearch {
+        margin-bottom: 10px;
+    }
+
+    .avatar {
+        height: 32px;
+        width: 32px;
+        margin: 3px;
+    }
+
+    #contact-list {
+        margin-top: 32px;
+    }
+
+    .contact-name {
+        padding: 12px 20px;
+    }
+
+    .contact-name-text {
+        font-style: italic;
+    }
+
+    .contact-name {
+        pointer-events: auto;
+    }
+
+    .row.user-contact {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .user-contact:hover {
+        background-color: lavender;
+    }
+
+    .contact-selected {
+        background-color: lavender;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    #message-list {
+        height: 200px;
+        max-height: 250px;
+        /*overflow-y: scroll;*/
+        overflow: auto;
+    }
+
+    #message-box {
+        max-height: 300px;
+        overflow: hidden;
+        word-wrap: break-word;
+        resize: none;
+        height: 60px;
+        margin-top: 20px;
+    }
+
+    textarea {
+        padding: 10px;
+        vertical-align: top;
+        width: 200px;
+    }
+
+        textarea:focus {
+            outline-style: solid;
+            outline-width: 2px;
+        }
+</style>

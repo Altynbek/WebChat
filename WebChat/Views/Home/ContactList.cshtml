@@ -1,0 +1,22 @@
+﻿@model WebChat.Models.Contact.ContactListModel
+@{ Layout = null; }
+
+@if (Model == null)
+{
+    return;
+}
+
+@foreach (var contact in Model.Contacts)
+{
+    <div class="row user-contact" onclick="StartDialogue(this)" 
+         data-contact-id="@contact.Id" data-contact-name="@contact.ContactName" data-confirmed="@contact.Confirmed">
+        <div class="col-md-2 contact-icon">
+            @{
+                string imagePath = contact.Confirmed ? contact.ContactPhotoUrl : @"/Content/Images/avatar-3.png";
+                <img src="@imagePath" class="avatar" />
+            }
+        </div>
+        <div class="col-md-10 contact-name"><span class="contact-name-text">@contact.ContactName</span></div>
+        <hr />
+    </div>
+}
