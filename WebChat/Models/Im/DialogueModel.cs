@@ -1,21 +1,25 @@
-﻿namespace WebChat.Models.Im
+﻿using System.Collections.Generic;
+
+namespace WebChat.Models.Im
 {
     public class DialogueInfoModel
     {
-        public string DialogueId { get; set; }         // from userdialogue
+        public string DialogueId { get; internal set; }
 
-        public string Name { get; set; }                // if (isMulty) -> dbDialogue, else from dbUserDialogue
+        public string Name { get; internal set; }
 
-        public string ShortMessage { get; set; }       // from message
+        public string ShortMessage { get; internal set; }
 
-        public string PhotoUrl { get; set; }           // if(isMulty)->dbDialogue, else from aspnetUser
+        public string PhotoUrl { get; internal set; }
 
-        public string RecentActivityDate { get; set; }  // from dbDialogue
+        public string RecentActivityDate { get; internal set; }
 
-        public bool IsContactConfirmed { get; set; }    // from dbUserContact
+        public bool IsContactConfirmed { get; internal set; }
 
-        public string FriendsheepInitiator { get; set; } // from dbUserContact
+        public string FriendsheepInitiator { get; internal set; }
 
-        public string CompanionId { get; set; }
+        public string CompanionId { get; internal set; }
+
+        public List<MessageModel> Messages { get; internal set; }
     }
 }

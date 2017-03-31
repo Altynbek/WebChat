@@ -194,6 +194,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Classes\DB\Repositories\DialogueRepository.cs" />
+    <Compile Include="Classes\DB\Repositories\MessageRepository.cs" />
     <Compile Include="Classes\DB\Repositories\UserDialogueRepository.cs" />
     <Compile Include="Classes\DB\Repositories\ContactRepository.cs" />
     <Compile Include="Classes\DB\Structure\DbUserContact.cs" />
@@ -202,7 +203,9 @@
     <Compile Include="Classes\DB\Structure\DbUserDialogue.cs" />
     <Compile Include="Classes\DB\Repositories\UserRepository.cs" />
     <Compile Include="Classes\DB\Repositories\IRepository.cs" />
+    <Compile Include="Classes\Exceptions\MessageNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\UserNotFoundException.cs" />
+    <Compile Include="Classes\Worker\MessageWorker.cs" />
     <Compile Include="Classes\Worker\DialogueWorker.cs" />
     <Compile Include="Classes\Worker\ContactWorker.cs" />
     <Compile Include="Controllers\AccountController.cs" />

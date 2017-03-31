@@ -44,7 +44,7 @@ namespace WebChat.Classes.Worker
             return model;
         }
 
-        public DbUserContact GetContactInfo(int contactId)
+        public DbUserContact GetContactById(int contactId)
         {
             var contact = _contactRepository.GetById(contactId);
             return contact;

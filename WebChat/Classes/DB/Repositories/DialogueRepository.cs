@@ -44,6 +44,20 @@ namespace WebChat.Classes.DB.Repositories
             _context.SaveChanges();
         }
 
+        public void Insert(DbDialogue entity, out int insertedRecordId)
+        {
+            var dbDialogue = _context.Dialogs.SingleOrDefault(x => x.Id == entity.Id && x.Name == entity.Name);
+            if (dbDialogue != null)
+            {
+                insertedRecordId = dbDialogue.Id;
+                return;
+            }
+
+            _context.Dialogs.Add(entity);
+            _context.SaveChanges();
+            insertedRecordId = entity.Id;
+        }
+
         public IQueryable<DbDialogue> SearchFor(Expression<Func<DbDialogue, bool>> predicate)
         {
             return _context.Dialogs.Where(predicate);

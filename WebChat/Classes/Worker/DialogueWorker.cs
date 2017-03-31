@@ -30,9 +30,9 @@ namespace WebChat.Classes.Worker
             var dbContact = _contactRepository.GetById(contactId);
             int hashcode = GetDialogueHashCode(dbContact.OwnerId, dbContact.ContactId);
 
-            var dbUserDialogue = _userDialogueRepository
-                .SearchFor( x => x.HashCode == hashcode && x.UserId == dbContact.OwnerId)
-                .SingleOrDefault();
+            //var dbUserDialogue = _userDialogueRepository
+            //    .SearchFor( x => x.HashCode == hashcode && x.UserId == dbContact.OwnerId)
+            //    .SingleOrDefault();
 
             dialogueInfo.CompanionId = dbContact.ContactId;
             dialogueInfo.IsContactConfirmed = dbContact.Confirmed;
@@ -43,51 +43,17 @@ namespace WebChat.Classes.Worker
             {    
                 return dialogueInfo;
             }
-
-            //if(dbUserDialogue == null)
-            //{
-            //}
-
-
-            //dialogueInfo.FriendsheepInitiator = dbContact.FriendsheepInitiator;
-            
-            //// если он не подтвержден, то подтверждаем его или ждем
-            //dialogueInfo.IsContactConfirmed = dbContact.Confirmed;
-            //dialogueInfo.Name = dbUserDialogue?.DialogueName;
-            //dialogueInfo.CompanionId = dbContact.ContactId;
-            //if (dbContact.Confirmed == false)
-            //    return dialogueInfo;
-
-            //// если он подтвержден
-            //// ищим диалог с этим контактом
-            //// если диалога не существует, то создаем его
-            //if (dbUserDialogue == null)
-            //{
-            //    var currentDate = DateTime.Today;
-            //    var dbDialogue = new DbDialogue()
-            //    {
-
-            //        CreateDate = currentDate,
-            //        IsMultyUser = false,
-            //        RecentActivityDate = currentDate,
-            //    };
-            //    _dialogueRepository.Insert(dbDialogue);
-
-            //    dbUserDialogue = new DbUserDialogue()
-            //    {
-            //        DialogueId = dbDialogue.Id,
-            //        UserId = dbContact.OwnerId,
-            //        HashCode = hashcode,
-            //        DialogueName = "qweqwe"
-            //    };
-            //    _userDialogueRepository.Insert(dbUserDialogue);
-            //}
-            // если диалог существует, то берем его
-
             return dialogueInfo;
         }
 
-        public int CreateDialogue(string firstUserId, string secondUserId)
+        public int CreatePersonalDialogue(string firstUserId, string secondUserId)
+        {
+            var dialogueId = CreateDbDialogue();
+            CreateDbUserDialogue(firstUserId, secondUserId, dialogueId);
+            return dialogueId;
+        }
+
+        private int CreateDbDialogue()
         {
             var currentDate = DateTime.Now;
             var dbDialogue = new DbDialogue()
@@ -96,14 +62,39 @@ namespace WebChat.Classes.Worker
                 IsMultyUser = false,
                 RecentActivityDate = currentDate,
             };
-            
-            int createdDialogueId = _dialogueRepository.Insert(dbDialogue);
+            int createdDialogueId = -1;
+            _dialogueRepository.Insert(dbDialogue, out createdDialogueId);
             return createdDialogueId;
+        }
+
+        private void CreateDbUserDialogue(string firstUserId, string secondUserId, int dialogueId)
+        {
+            var user1 = _userRepository.GetById(firstUserId);
+            var user2 = _userRepository.GetById(secondUserId);
+            int hashCode = GetDialogueHashCode(firstUserId, secondUserId);
+
+            var dbUserDialogue1 = new DbUserDialogue()
+            {
+                DialogueId = dialogueId,
+                UserId = user1.Id,
+                DialogueName = user1.UserName,
+                HashCode = hashCode,
+            };
+
+            var dbUserDialogue2 = new DbUserDialogue()
+            {
+                DialogueId = dialogueId,
+                UserId = user2.Id,
+                DialogueName = user2.UserName,
+                HashCode = hashCode,
+            };
+            _userDialogueRepository.Insert(dbUserDialogue1);
+            _userDialogueRepository.Insert(dbUserDialogue2);
         }
 
         public int? GetDialogueIdByHashCode(int hashCode)
         {
-            var userDialogue = _userDialogueRepository.SearchFor(x=>x.HashCode == hashCode).SingleOrDefault();
+            var userDialogue = _userDialogueRepository.SearchFor(x => x.HashCode == hashCode).FirstOrDefault();
             if(userDialogue != null)
             {
                 return userDialogue.DialogueId;

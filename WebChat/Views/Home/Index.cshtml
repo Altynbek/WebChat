@@ -98,6 +98,7 @@
             data: { "contactId": contactId, "contactName": contactName, "confirmed": isConfirmed },
             success: function (result) {
                 $('#dialogue-container').html(result);
+                scrollToBottom(document.getElementById('message-list'));
             }
         });
     }
@@ -159,6 +160,57 @@
 
 </script>
 
+<script>
+    $(document).keypress(function (e) {
+        if ($(e.target).is('textarea')) {
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                ProcessMessage();
+            }
+        }
+    });
+
+    function ClearMessageBox() {
+        $('#message-box').val("");
+        autosize.update(document.querySelector('textarea'));
+    }
+
+    function ProcessMessage() {
+        var dialogueId = null;          // dialog еще не создан
+        var message = $('#message-box').val();
+        var companionId = $('#companionId').val();
+
+        if (!message)
+            return;
+
+        $.ajax({
+            url: "/Im/SendMessage",
+            data: { "dialogueId": dialogueId, "companionId": companionId, "message": message },
+            type: "post",
+            success: function (result) {
+                PushMessage(result);
+                console.log("qwe");
+                ClearMessageBox();
+            }
+        });
+    }
+
+
+
+    function PushMessage(message) {
+        const messageList = document.getElementById('message-list');
+        var shouldScroll = messageList.scrollTop + messageList.clientHeight === messageList.scrollHeight;
+
+        $('#message-list').append(message)
+        if (shouldScroll) {
+            scrollToBottom(messageList);
+        }
+    }
+
+    function scrollToBottom(messageContainer) {
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+</script>
 
 <style>
     .centered {
