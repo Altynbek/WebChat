@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using WebChat.Classes.Db.Structure;
+using WebChat.Classes.Exceptions;
 
 namespace WebChat.Classes.DB.Repositories
 {
@@ -30,13 +31,19 @@ namespace WebChat.Classes.DB.Repositories
 
         public DbDialogue GetById(object id)
         {
-            throw new NotImplementedException();
-            throw new ArgumentException("The id parameter sended to the GetById method should have a non negative integer value");
+            if (id.GetType() != typeof(int))
+                throw new ArgumentException("The id parameter sended to the GetById method should have a non negative integer value");
+
+            var dialogue = _context.Dialogs.SingleOrDefault(x => x.Id == (int)id);
+            if (dialogue == null)
+                throw new DialogueNotFoundException("The dialogue with the given key was not found");
+
+            return dialogue;
         }
 
         public void Insert(DbDialogue entity)
         {
-            bool contactExist = _context.Dialogs.Count(x=>x.Id == entity.Id && x.Name == entity.Name) > 0;
+            bool contactExist = _context.Dialogs.Count(x => x.Id == entity.Id && x.Name == entity.Name) > 0;
             if (contactExist)
                 return;
 

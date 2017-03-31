@@ -203,6 +203,7 @@
     <Compile Include="Classes\DB\Structure\DbUserDialogue.cs" />
     <Compile Include="Classes\DB\Repositories\UserRepository.cs" />
     <Compile Include="Classes\DB\Repositories\IRepository.cs" />
+    <Compile Include="Classes\Exceptions\DialogueNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\MessageNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\UserNotFoundException.cs" />
     <Compile Include="Classes\Worker\MessageWorker.cs" />

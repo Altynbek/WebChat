@@ -18,7 +18,8 @@ namespace WebChat.Classes.DB.Repositories
 
         public void Delete(DbMessage entity)
         {
-            throw new NotImplementedException();
+            _context.Messages.Remove(entity);
+            _context.SaveChanges();
         }
 
         public void Dispose()
