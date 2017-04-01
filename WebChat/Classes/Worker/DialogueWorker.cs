@@ -33,7 +33,9 @@ namespace WebChat.Classes.Worker
             //var dbUserDialogue = _userDialogueRepository
             //    .SearchFor( x => x.HashCode == hashcode && x.UserId == dbContact.OwnerId)
             //    .SingleOrDefault();
-
+            dialogueInfo.PhotoUrl = dbContact.Confirmed ? 
+                _userRepository.GetById(dbContact.ContactId).PhotoUrl ?? "/Content/Images/avatar-default.png" : 
+                "/Content/Images/avatar-unknown.png";
             dialogueInfo.CompanionId = dbContact.ContactId;
             dialogueInfo.IsContactConfirmed = dbContact.Confirmed;
             dialogueInfo.FriendsheepInitiator = dbContact.FriendsheepInitiator;
@@ -109,7 +111,7 @@ namespace WebChat.Classes.Worker
             _userRepository.Dispose();
         }
 
-        public int GetDialogueHashCode(string userId1, string userId2)
+        public static int GetDialogueHashCode(string userId1, string userId2)
         {
             var result = userId1.GetHashCode() + userId2.GetHashCode();
             return result;

@@ -18,5 +18,7 @@ namespace WebChat.Models.Contact
         public bool Confirmed { get; set; }
 
         public string FriendsheepInitiator { get; set; }
+
+        public bool HasNewMessages { get; set; }
     }
 }

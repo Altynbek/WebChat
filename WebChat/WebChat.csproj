@@ -205,6 +205,7 @@
     <Compile Include="Classes\DB\Repositories\IRepository.cs" />
     <Compile Include="Classes\Exceptions\DialogueNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\MessageNotFoundException.cs" />
+    <Compile Include="Classes\Exceptions\UserContactNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\UserNotFoundException.cs" />
     <Compile Include="Classes\Worker\MessageWorker.cs" />
     <Compile Include="Classes\Worker\DialogueWorker.cs" />
@@ -244,6 +245,10 @@
     <Compile Include="Migrations\201703281720539_AddHashCodeColumnToUserDialogueTable.Designer.cs">
       <DependentUpon>201703281720539_AddHashCodeColumnToUserDialogueTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201704010459032_AddIsReadColumnToTheDbMessageTable.cs" />
+    <Compile Include="Migrations\201704010459032_AddIsReadColumnToTheDbMessageTable.Designer.cs">
+      <DependentUpon>201704010459032_AddIsReadColumnToTheDbMessageTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account\SearchedContactListModel.cs" />
     <Compile Include="Models\Account\SearchedContactModel.cs" />
@@ -269,9 +274,10 @@
     <Content Include="Content\Images\avatar-2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\Images\avatar-3.png">
+    <Content Include="Content\Images\avatar-unknown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Images\avatar-default.png" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -356,6 +362,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201703281720539_AddHashCodeColumnToUserDialogueTable.resx">
       <DependentUpon>201703281720539_AddHashCodeColumnToUserDialogueTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704010459032_AddIsReadColumnToTheDbMessageTable.resx">
+      <DependentUpon>201704010459032_AddIsReadColumnToTheDbMessageTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

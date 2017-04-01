@@ -15,6 +15,7 @@ namespace WebChat.Controllers
         private readonly MessageWorker _messageWorker = null;
         private readonly ContactWorker _contactWorker = null;
 
+
         public ImController()
         {
             var context = new DbContext();
@@ -23,7 +24,6 @@ namespace WebChat.Controllers
             _contactWorker = new ContactWorker(context);
         }
 
-
         public ActionResult Index(string contactId)
         {
             int id = int.Parse(contactId);
@@ -31,21 +31,23 @@ namespace WebChat.Controllers
 
             var companionContact = _contactWorker.GetContactById(id);
             string currentUserId = User.Identity.GetUserId();
-            int hashCode = _dialogueWorker.GetDialogueHashCode(currentUserId, companionContact.ContactId);
+            int hashCode = DialogueWorker.GetDialogueHashCode(currentUserId, companionContact.ContactId);
             int? dbDialogueId = _dialogueWorker.GetDialogueIdByHashCode(hashCode);
 
             if (dbDialogueId != null)
-                dialogueInfo.Messages = _messageWorker.GetMessages((int)dbDialogueId).OrderBy(x=>x.SendTime).ToList();
+            {
+                dialogueInfo.Messages = _messageWorker.GetMessages((int)dbDialogueId).OrderBy(x => x.SendTime).ToList();
+                dialogueInfo.DialogueId = (int)dbDialogueId;
+            }
 
             return PartialView("Dialogue", dialogueInfo);
         }
-
 
         [HttpPost]
         public ActionResult SendMessage(string dialogueId, string companionId, string message)
         {
             string currentUserId = User.Identity.GetUserId();
-            int hashCode = _dialogueWorker.GetDialogueHashCode(currentUserId, companionId);
+            int hashCode = DialogueWorker.GetDialogueHashCode(currentUserId, companionId);
             int? dbDialogueId = _dialogueWorker.GetDialogueIdByHashCode(hashCode);
 
             if(dbDialogueId == null)
@@ -60,7 +62,8 @@ namespace WebChat.Controllers
                 DialogueId = (int)dbDialogueId,
                 IsEdited = false,
                 SendingDate = currentDate,
-                Text = message
+                Text = message,
+                IsReaded = false
             };
             _messageWorker.SaveMessage(dbMessage);
 
@@ -73,6 +76,13 @@ namespace WebChat.Controllers
             return PartialView("Message", messageModel);
         }
 
+        [HttpPost]
+        public JsonResult MarkDialogueAsReaded(string dialogueId)
+        {
+            var currentUserId = User.Identity.GetUserId();
+            int updateRecordsCount = _messageWorker.MarkMessagesAsReaded(int.Parse(dialogueId), currentUserId);
+            return Json(new { success = updateRecordsCount > 0}, JsonRequestBehavior.AllowGet);
+        }
 
         protected override void Dispose(bool disposing)
         {

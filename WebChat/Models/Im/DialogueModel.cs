@@ -4,7 +4,7 @@ namespace WebChat.Models.Im
 {
     public class DialogueInfoModel
     {
-        public string DialogueId { get; internal set; }
+        public int DialogueId { get; internal set; }
 
         public string Name { get; internal set; }
 

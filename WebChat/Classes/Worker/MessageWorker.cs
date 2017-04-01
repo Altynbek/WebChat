@@ -44,5 +44,10 @@ namespace WebChat.Classes.Worker
             _messageRepository.Dispose();
             _userRepository.Dispose();
         }
+
+        public int MarkMessagesAsReaded(int dialogueId, string recipientId)
+        {
+            return _messageRepository.MarkMessagesAsReaded(dialogueId, recipientId);
+        }
     }
 }

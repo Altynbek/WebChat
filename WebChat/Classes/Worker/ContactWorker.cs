@@ -12,19 +12,24 @@ namespace WebChat.Classes.Worker
     {
         private readonly ContactRepository _contactRepository = null;
         private readonly UserRepository _userRepository = null;
+        private readonly MessageRepository _messageRepository = null;
+        private readonly UserDialogueRepository _userDialogueRepository = null;
 
         public ContactWorker(DbContext context)
         {
             _contactRepository = new ContactRepository(context);
             _userRepository = new UserRepository(context);
+            _messageRepository = new MessageRepository(context);
+            _userDialogueRepository = new UserDialogueRepository(context);
         }
 
         public ContactListModel GetContacts(string userId)
         {
             var model = new ContactListModel();
-            List<DbUserContact> dbContacts = _contactRepository.SearchFor(item => item.OwnerId == userId).ToList();
+            List<DbUserContact> dbContacts = _contactRepository.SearchFor(item => item.OwnerId == userId).OrderBy(x=>x.Confirmed).ToList();
             List<string> usersId = dbContacts.Select(x => x.ContactId).ToList();
             List<DbUser> usersProfile = _userRepository.SearchFor(x => usersId.Contains(x.Id)).ToList();
+            Dictionary<string, bool> userMessageStatus = _messageRepository.GetUserMessageStatuses(userId, usersId);
 
             foreach (var dbc in dbContacts)
             {
@@ -36,7 +41,8 @@ namespace WebChat.Classes.Worker
                     Confirmed = dbc.Confirmed,
                     ContactName = profile?.UserName,
                     ContactPhotoUrl = profile?.PhotoUrl,
-                    FriendsheepInitiator = dbc.FriendsheepInitiator
+                    FriendsheepInitiator = dbc.FriendsheepInitiator,
+                    HasNewMessages = userMessageStatus.ContainsKey(dbc.ContactId) ? userMessageStatus[dbc.ContactId] : false
                 };
 
                 model.Contacts.Add(contact);
@@ -54,6 +60,8 @@ namespace WebChat.Classes.Worker
         {
             _contactRepository.Dispose();
             _userRepository.Dispose();
+            _messageRepository.Dispose();
+            _userDialogueRepository.Dispose();
         }
     }
 }

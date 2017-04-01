@@ -41,6 +41,12 @@ namespace WebChat.Classes.DB.Repositories
             throw new ArgumentException("The id parameter sended to the GetById method should have a non negative integer value");
         }
 
+        public DbUserContact GetByUserId(string userId)
+        {
+            var dbContact = _context.UserContacts.SingleOrDefault(x=>x.ContactId == userId);
+            return dbContact;
+        }
+
         public void Insert(DbUserContact entity)
         {
             bool contactExist = _context.UserContacts.Count(x => x.ContactId == entity.ContactId && x.OwnerId == entity.OwnerId) > 0;

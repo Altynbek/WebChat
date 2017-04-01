@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Web;
 
 namespace WebChat.Models.Account
 {
@@ -23,5 +24,8 @@ namespace WebChat.Models.Account
         [Display(Name = "Repeat your password")]
         [Compare("Password", ErrorMessage ="Entered passwords are not equal")]
         public string PasswordConfirm { get; set; }
+
+        [Display(Name = "Attach the user photo")]
+        public HttpPostedFileBase UserPhoto { get; set; }
     }
 }

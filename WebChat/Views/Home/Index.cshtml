@@ -73,10 +73,9 @@
         }
 
         var contactId = $(contactRow).data("contact-id");
-        var contactName = $(contactRow).data("contact-name");
         $.ajax({
             url: "/Contact/AddNewContact",
-            data: { "contactId": contactId, "contactName": contactName },
+            data: { "contactId": contactId },
             success: function (result) {
                 $('#dialogue-container').html(result);
             }
@@ -98,7 +97,24 @@
             data: { "contactId": contactId, "contactName": contactName, "confirmed": isConfirmed },
             success: function (result) {
                 $('#dialogue-container').html(result);
+                if ($(contactRow).data("has-new-message") == "True") {
+                    var dialogueId = $('#dialogueId').val();
+                    MarkDialogueAsReaded(dialogueId, contactRow);
+                }
                 scrollToBottom(document.getElementById('message-list'));
+            }
+        });
+    }
+
+    function MarkDialogueAsReaded(dialogueId, selectedContact) {
+        $.ajax({
+            url: "/Im/MarkDialogueAsReaded",
+            data: { "dialogueId": dialogueId },
+            type: "post",
+            success: function (result) {
+                if (result.success == true) {
+                    $(selectedContact).find('.new-message').addClass('hidden');
+                }
             }
         });
     }
@@ -208,9 +224,13 @@
     }
 
     function scrollToBottom(messageContainer) {
+        if (messageContainer == null)
+            return;
+
         messageContainer.scrollTop = messageContainer.scrollHeight;
     }
 </script>
+
 
 <style>
     .centered {
@@ -238,6 +258,8 @@
 
     .contact-name-text {
         font-style: italic;
+        font-weight: bold;
+        font-size: 12pt;
     }
 
     .contact-name {
@@ -287,4 +309,8 @@
             outline-style: solid;
             outline-width: 2px;
         }
+
+    .new-message {
+        color: orangered;
+    }
 </style>

@@ -20,6 +20,8 @@ namespace WebChat.Classes.Db.Structure
 
         public DateTime SendingDate { get; set; }
 
+        public bool IsReaded { get; set; }
+
         public bool? IsEdited { get; set; }
 
         public DateTime? LastEditDate { get; set; }

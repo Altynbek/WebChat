@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using WebChat.Classes.Db.Structure;
 using WebChat.Classes.DB.Repositories;
 using WebChat.Classes.Worker;
+using WebChat.Models;
 using WebChat.Models.Contact;
 
 namespace WebChat.Controllers
@@ -13,17 +16,23 @@ namespace WebChat.Controllers
     [Authorize]
     public class ContactController : Controller
     {
-        private readonly ContactRepository _contactRepository;
+        private readonly ContactRepository _contactRepository = null;
+        private readonly UserRepository _userRepository = null;
 
         public ContactController()
         {
-            _contactRepository = new ContactRepository(new DbContext());
+            var context = new DbContext();
+            _contactRepository = new ContactRepository(context);
+            _userRepository = new UserRepository(context);
         }
 
         [HttpGet]
-        public ActionResult AddNewContact(string contactId, string contactName)
+        public ActionResult AddNewContact(string contactId)
         {
-            var model = new NewContactModel() { ContactId = contactId, ContactName = contactName };
+            var usr = _userRepository.GetById(contactId);
+            var contact = _contactRepository.GetByUserId(contactId);
+
+            var model = new NewContactModel() { ContactId = contactId, ContactName = usr.UserName, PhotoUrl = usr.PhotoUrl };
             return PartialView("AddNewContactToBook", model);
         }
 
@@ -73,6 +82,7 @@ namespace WebChat.Controllers
         protected override void Dispose(bool disposing)
         {
             _contactRepository.Dispose();
+            _userRepository.Dispose();
             base.Dispose(disposing);
         }
     }

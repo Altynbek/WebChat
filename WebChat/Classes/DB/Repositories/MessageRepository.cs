@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using WebChat.Classes.Db.Structure;
 using WebChat.Classes.Exceptions;
+using WebChat.Classes.Worker;
 
 namespace WebChat.Classes.DB.Repositories
 {
@@ -45,6 +46,22 @@ namespace WebChat.Classes.DB.Repositories
             return message;
         }
 
+        public Dictionary<string, bool> GetUserMessageStatuses(string firstUserId, List<string> companionsListIds)
+        {
+            var result = new Dictionary<string, bool>();
+            foreach(var companion in companionsListIds)
+            {
+                int hashcode = DialogueWorker.GetDialogueHashCode(firstUserId, companion);
+                var userDialogue = _context.UserDialogues.FirstOrDefault(x => x.HashCode == hashcode);
+                if(userDialogue != null)
+                {
+                    bool hasUnreadedMessages = _context.Messages.Any(x => x.DialogueId == userDialogue.DialogueId && x.CreatorId != firstUserId && x.IsReaded == false);
+                    result.Add(companion, hasUnreadedMessages);
+                }
+            }
+            return result;
+        }
+
         public void Insert(DbMessage entity)
         {
             if (entity == null)
@@ -58,6 +75,17 @@ namespace WebChat.Classes.DB.Repositories
         {
             var messages = _context.Messages.Where(predicate);
             return messages;
+        }
+
+        public int MarkMessagesAsReaded(int dialogueId, string recipientId)
+        {
+            var messages = _context.Messages.Where(x => x.DialogueId == dialogueId && x.CreatorId != recipientId).ToList();
+            foreach(var msg in messages)
+            {
+                msg.IsReaded = true;
+            }
+            int updatedRecordsCount = _context.SaveChanges();
+            return updatedRecordsCount;
         }
     }
 }

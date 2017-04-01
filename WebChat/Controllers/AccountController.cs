@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -43,10 +44,20 @@ namespace WebChat.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new DbUser() { Email = model.Email, UserName = model.Name };
+                string photoUrl = "/Content/Images/" + model.UserPhoto == null ? "avatar-default.png" : model.UserPhoto.FileName;
+                var user = new DbUser() { Email = model.Email, UserName = model.Name, PhotoUrl = photoUrl };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
+                {
+                    if (model.UserPhoto != null && model.UserPhoto.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(model.UserPhoto.FileName);
+                        var path = Path.Combine(Server.MapPath("/Content/Images"), fileName);
+                        model.UserPhoto.SaveAs(path);
+                    }
                     return RedirectToAction("SignIn", "Account");
+                }
+
                 else
                 {
                     foreach (var error in result.Errors)
