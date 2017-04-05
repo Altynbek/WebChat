@@ -1,0 +1,47 @@
+﻿@model WebChat.Models.Im.GroupDialogueInfoModel
+@Scripts.Render("~/bundles/autosize")
+@{
+    Layout = null;
+}
+
+
+<div class="row">
+    @{
+        string imageUrl = String.IsNullOrEmpty(Model.PhotoUrl) ? "/Content/Images/avatar-group-default.png" : Model.PhotoUrl;
+    }
+    <img src="@imageUrl" class="avatar" style="width:40px; height: 40px" />
+    <h3 style="display: inline-block">@Model.Name</h3>
+</div>
+<hr />
+
+@Html.Hidden("dialogueId", Model.DialogueId, new { @id = "dialogueId" })
+
+
+<div id="message-list">
+    @if (Model.Messages != null && Model.Messages.Count > 0)
+    {
+        foreach (var msg in Model.Messages)
+        {
+            <div>
+                <dl>
+                    <dt>@msg.SenderName (@msg.SendTime)</dt>
+                    <dd>
+                        @msg.message
+                    </dd>
+                </dl>
+            </div>
+        }
+    }
+</div>
+<textarea id="message-box" class="form-control" style='max-height: 200px'></textarea>
+
+<script>
+    autosize(document.querySelectorAll('textarea'));
+
+    $("#message-box").keypress(function (e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            ProcessMessage();
+        }
+    });
+</script>

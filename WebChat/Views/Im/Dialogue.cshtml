@@ -54,4 +54,13 @@ else
 
 <script>
     autosize(document.querySelectorAll('textarea'));
+
+    $("#message-box").keypress(function (e) {
+        debugger;
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            ProcessMessage();
+        }
+    });
+
 </script>

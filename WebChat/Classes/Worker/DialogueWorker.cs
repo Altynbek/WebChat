@@ -30,9 +30,6 @@ namespace WebChat.Classes.Worker
             var dbContact = _contactRepository.GetById(contactId);
             int hashcode = GetDialogueHashCode(dbContact.OwnerId, dbContact.ContactId);
 
-            //var dbUserDialogue = _userDialogueRepository
-            //    .SearchFor( x => x.HashCode == hashcode && x.UserId == dbContact.OwnerId)
-            //    .SingleOrDefault();
             dialogueInfo.PhotoUrl = dbContact.Confirmed ? 
                 _userRepository.GetById(dbContact.ContactId).PhotoUrl ?? "/Content/Images/avatar-default.png" : 
                 "/Content/Images/avatar-unknown.png";
@@ -48,6 +45,7 @@ namespace WebChat.Classes.Worker
             return dialogueInfo;
         }
 
+        
         public int CreatePersonalDialogue(string firstUserId, string secondUserId)
         {
             var dialogueId = CreateDbDialogue();
@@ -116,7 +114,5 @@ namespace WebChat.Classes.Worker
             var result = userId1.GetHashCode() + userId2.GetHashCode();
             return result;
         }
-
-
     }
 }

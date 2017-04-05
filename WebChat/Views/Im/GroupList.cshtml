@@ -1,0 +1,32 @@
+﻿@{ 
+    Layout = null;
+}
+
+@model WebChat.Models.Home.GroupListModel
+
+@if(Model == null)
+{
+    return;
+}
+
+@foreach (var group in Model.Groups)
+{
+    <div class="row user-contact" onclick="StartGroupDialogue(this)" id="dialogue-@group.DialogueId"
+         data-has-new-message="@group.HasNewMessages" data-dialogue-id="@group.DialogueId" data-name="@group.Name">
+        <div class="col-md-2 contact-icon">
+            @{
+
+                string imageUrl = String.IsNullOrEmpty(group.PhotoUrl) ? "/Content/Images/avatar-group-default.png" : group.PhotoUrl;
+                <img src="@imageUrl" class="avatar" />
+            }
+        </div>
+        <div class="col-md-10 contact-name">
+            <span class="contact-name-text col-md-6">@group.Name</span>
+            @if (group.HasNewMessages)
+            {
+                <span class="glyphicon glyphicon-tint new-message col-md-offset-5"></span>
+            }
+        </div>
+        <hr />
+    </div>
+                }

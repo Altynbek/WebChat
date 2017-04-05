@@ -1,0 +1,30 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model WebChat.Models.Home.GroupModel
+
+@if (Model == null)
+{
+    return;
+}
+
+    <div class="row user-contact" onclick="StartGroupDialogue(this)" id="dialogue-@Model.DialogueId"
+         data-has-new-message="@Model.HasNewMessages" data-dialogue-id="@Model.DialogueId" data-name="@Model.Name">
+        <div class="col-md-2 contact-icon">
+            @{
+
+                string imageUrl = String.IsNullOrEmpty(Model.PhotoUrl) ? "/Content/Images/avatar-group-default.pngS" : Model.PhotoUrl;
+                <img src="@imageUrl" class="avatar" />
+            }
+        </div>
+        <div class="col-md-10 contact-name">
+            <span class="contact-name-text col-md-6">@Model.Name</span>
+            @if (Model.HasNewMessages)
+            {
+                <span class="glyphicon glyphicon-tint new-message col-md-offset-5"></span>
+            }
+        </div>
+        <hr />
+    </div>

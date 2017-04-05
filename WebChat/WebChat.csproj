@@ -194,6 +194,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Classes\DB\Repositories\DialogueRepository.cs" />
+    <Compile Include="Classes\DB\Repositories\GroupDialogueRepository.cs" />
     <Compile Include="Classes\DB\Repositories\MessageRepository.cs" />
     <Compile Include="Classes\DB\Repositories\UserDialogueRepository.cs" />
     <Compile Include="Classes\DB\Repositories\ContactRepository.cs" />
@@ -207,6 +208,8 @@
     <Compile Include="Classes\Exceptions\MessageNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\UserContactNotFoundException.cs" />
     <Compile Include="Classes\Exceptions\UserNotFoundException.cs" />
+    <Compile Include="Classes\Helpers\RazorHelper.cs" />
+    <Compile Include="Classes\Worker\GroupWorker.cs" />
     <Compile Include="Classes\Worker\MessageWorker.cs" />
     <Compile Include="Classes\Worker\DialogueWorker.cs" />
     <Compile Include="Classes\Worker\ContactWorker.cs" />
@@ -260,7 +263,12 @@
     <Compile Include="Models\Contact\NewContactModel.cs" />
     <Compile Include="Models\Contact\ContactListModel.cs" />
     <Compile Include="Models\Contact\ContactModel.cs" />
-    <Compile Include="Models\Im\DialogueModel.cs" />
+    <Compile Include="Models\Home\GroupModel.cs" />
+    <Compile Include="Models\Home\GroupListModel.cs" />
+    <Compile Include="Models\Contact\ModalContactListModel.cs" />
+    <Compile Include="Models\Contact\ModalContactModel.cs" />
+    <Compile Include="Models\Im\GroupDialogueInfoModel.cs" />
+    <Compile Include="Models\Im\DialogueInfoModel.cs" />
     <Compile Include="Models\Im\DialogueListModel.cs" />
     <Compile Include="Models\Im\MessageModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -274,6 +282,7 @@
     <Content Include="Content\Images\avatar-2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\Images\avatar-group-default.png" />
     <Content Include="Content\Images\avatar-unknown.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -328,10 +337,13 @@
     <Content Include="Views\Contact\AddNewContactToBook.cshtml" />
     <Content Include="Views\Im\Dialogue.cshtml" />
     <Content Include="Views\Im\Message.cshtml" />
+    <Content Include="Views\Contact\ModalContactList.cshtml" />
+    <Content Include="Views\Im\GroupList.cshtml" />
+    <Content Include="Views\Im\GroupDialogue.cshtml" />
+    <Content Include="Views\Im\GroupListItem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Home\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

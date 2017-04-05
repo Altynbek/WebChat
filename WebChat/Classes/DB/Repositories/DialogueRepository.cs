@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using WebChat.Classes.Db.Structure;
@@ -73,6 +74,19 @@ namespace WebChat.Classes.DB.Repositories
         public void Dispose()
         {
             _context.Dispose();
+        }
+
+        public int Insert(List<DbUserDialogue> dbUserDialogues)
+        {
+            _context.UserDialogues.AddRange(dbUserDialogues);
+            int insertedRecordsCound = _context.SaveChanges();
+            return insertedRecordsCound;
+        }
+
+        public List<string> GetDialogueCompanions(int dialogueId)
+        {
+            var dbUsersId = _context.UserDialogues.Where(x => x.DialogueId == dialogueId).Select(x => x.UserId).ToList();
+            return dbUsersId;
         }
     }
 }

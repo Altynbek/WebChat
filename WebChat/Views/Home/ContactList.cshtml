@@ -9,7 +9,7 @@
 @foreach (var contact in Model.Contacts)
 {
     <div class="row user-contact" onclick="StartDialogue(this)"
-         data-contact-id="@contact.Id" data-contact-name="@contact.ContactName" data-confirmed="@contact.Confirmed" data-has-new-message="@contact.HasNewMessages">
+         data-contact-id="@contact.Id" data-name="@contact.ContactName" data-confirmed="@contact.Confirmed" data-has-new-message="@contact.HasNewMessages">
         <div class="col-md-2 contact-icon">
             @{
 
@@ -26,4 +26,4 @@
         </div>
         <hr />
     </div>
-                }
+}

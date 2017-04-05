@@ -38,11 +38,7 @@ namespace WebChat.Classes.DB.Repositories
             if (id.GetType() != typeof(int))
                 throw new ArgumentException("The id parameter should have the non negative numeric value");
 
-            int msgId = (int)id;
-            var message = _context.Messages.SingleOrDefault(x => x.Id == msgId);
-            if (message == null)
-                throw new MessageNotFoundException("The message with the given key was not found");
-
+            var message = _context.Messages.SingleOrDefault(x => x.Id == (int)id);
             return message;
         }
 

@@ -18,12 +18,15 @@ namespace WebChat.Controllers
     {
         private readonly ContactRepository _contactRepository = null;
         private readonly UserRepository _userRepository = null;
+        private readonly ContactWorker _contactWorker = null;
 
         public ContactController()
         {
             var context = new DbContext();
             _contactRepository = new ContactRepository(context);
             _userRepository = new UserRepository(context);
+
+            _contactWorker = new ContactWorker(context);
         }
 
         [HttpGet]
@@ -79,10 +82,19 @@ namespace WebChat.Controllers
             return Json(new { success = result > 0 });
         }
 
+        [HttpGet]
+        public ActionResult GetContactsForGroupDialogues()
+        {
+            string currentUserId = User.Identity.GetUserId();
+            ModalContactListModel model = _contactWorker.GetContactsForGroupDialogues(currentUserId);
+            return PartialView("ModalContactList", model);
+        }
+
         protected override void Dispose(bool disposing)
         {
             _contactRepository.Dispose();
             _userRepository.Dispose();
+            _contactWorker.Dispose();
             base.Dispose(disposing);
         }
     }

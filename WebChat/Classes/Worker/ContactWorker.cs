@@ -56,6 +56,30 @@ namespace WebChat.Classes.Worker
             return contact;
         }
 
+        public ModalContactListModel GetContactsForGroupDialogues(string userId)
+        {
+            var model = new ModalContactListModel();
+            List<DbUserContact> dbContacts = _contactRepository.SearchFor(item => item.OwnerId == userId).OrderBy(x => x.Confirmed).ToList();
+            List<string> usersId = dbContacts.Select(x => x.ContactId).ToList();
+            List<DbUser> usersProfile = _userRepository.SearchFor(x => usersId.Contains(x.Id)).ToList();
+
+            foreach (var dbc in dbContacts)
+            {
+                var profile = usersProfile.SingleOrDefault(x => x.Id == dbc.ContactId);
+                var contact = new ModalContactModel()
+                {
+                    ContactId = dbc.Id,
+                    CompanionId = dbc.ContactId,
+                    Confirmed = dbc.Confirmed,
+                    CompanionName = profile?.UserName,
+                    ContactPhotoUrl = profile?.PhotoUrl
+                };
+
+                model.Contacts.Add(contact);
+            }
+            return model;
+        }
+
         public void Dispose()
         {
             _contactRepository.Dispose();

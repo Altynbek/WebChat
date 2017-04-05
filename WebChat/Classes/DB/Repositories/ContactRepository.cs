@@ -31,14 +31,11 @@ namespace WebChat.Classes.DB.Repositories
 
         public DbUserContact GetById(object id)
         {
-            if (id.GetType() == typeof(int))
-            {
-                int identificator = (int)id;
-                var contact = _context.UserContacts.SingleOrDefault(x => x.Id == identificator);
-                return contact;
-            }
+            if (id.GetType() != typeof(int))
+                throw new ArgumentException("The id parameter sended to the GetById method should have a non negative integer value");
 
-            throw new ArgumentException("The id parameter sended to the GetById method should have a non negative integer value");
+            var contact = _context.UserContacts.SingleOrDefault(x => x.Id == (int)id);
+            return contact;
         }
 
         public DbUserContact GetByUserId(string userId)

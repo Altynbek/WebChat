@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNet.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using WebChat.Classes.Db.Structure;
+using WebChat.Classes.Helpers;
 using WebChat.Classes.Worker;
+using WebChat.Models.Contact;
 using WebChat.Models.Im;
 
 namespace WebChat.Controllers
@@ -14,6 +17,7 @@ namespace WebChat.Controllers
         private readonly DialogueWorker _dialogueWorker = null;
         private readonly MessageWorker _messageWorker = null;
         private readonly ContactWorker _contactWorker = null;
+        private readonly GroupWorker _groupWorker = null;
 
 
         public ImController()
@@ -22,6 +26,7 @@ namespace WebChat.Controllers
             _dialogueWorker = new DialogueWorker(context);
             _messageWorker = new MessageWorker(context);
             _contactWorker = new ContactWorker(context);
+            _groupWorker = new GroupWorker(context);
         }
 
         public ActionResult Index(string contactId)
@@ -43,23 +48,41 @@ namespace WebChat.Controllers
             return PartialView("Dialogue", dialogueInfo);
         }
 
+        public ActionResult StartGroupDialogue(string dialogueId)
+        {
+            int id = int.Parse(dialogueId);
+            var dialogueInfo = _groupWorker.GetGroupDialogueInfo(id);
+
+            dialogueInfo.Messages = _messageWorker.GetMessages(int.Parse(dialogueId)).OrderBy(x => x.SendTime).ToList();
+            return PartialView("GroupDialogue", dialogueInfo);
+        }
+
         [HttpPost]
         public ActionResult SendMessage(string dialogueId, string companionId, string message)
         {
             string currentUserId = User.Identity.GetUserId();
-            int hashCode = DialogueWorker.GetDialogueHashCode(currentUserId, companionId);
-            int? dbDialogueId = _dialogueWorker.GetDialogueIdByHashCode(hashCode);
-
-            if(dbDialogueId == null)
+            int dialId = -1;
+            if(!String.IsNullOrEmpty(companionId))
             {
-                dbDialogueId = _dialogueWorker.CreatePersonalDialogue(currentUserId, companionId);
+                int hashCode = DialogueWorker.GetDialogueHashCode(currentUserId, companionId);
+                int? dbDialogueId = _dialogueWorker.GetDialogueIdByHashCode(hashCode);
+
+                if (dbDialogueId == null)
+                {
+                    dialId = _dialogueWorker.CreatePersonalDialogue(currentUserId, companionId);
+                }
+            }
+            else if (!String.IsNullOrEmpty(dialogueId))
+            {
+                dialId = int.Parse(dialogueId);
             }
 
-            var currentDate = DateTime.Now;
+
+                var currentDate = DateTime.Now;
             var dbMessage = new DbMessage()
             {
                 CreatorId = currentUserId,
-                DialogueId = (int)dbDialogueId,
+                DialogueId = dialId,
                 IsEdited = false,
                 SendingDate = currentDate,
                 Text = message,
@@ -71,7 +94,7 @@ namespace WebChat.Controllers
             messageModel.message = message;
             messageModel.SendTime = DateTime.Now;
             messageModel.SenderName = User.Identity.Name;
-            messageModel.dialogueId = (int)dbDialogueId;
+            messageModel.dialogueId = dialId;
 
             return PartialView("Message", messageModel);
         }
@@ -81,7 +104,32 @@ namespace WebChat.Controllers
         {
             var currentUserId = User.Identity.GetUserId();
             int updateRecordsCount = _messageWorker.MarkMessagesAsReaded(int.Parse(dialogueId), currentUserId);
-            return Json(new { success = updateRecordsCount > 0}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = updateRecordsCount > 0 }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult CreateGroup(ModalContactListModel model)
+        {
+            int dialogueId = -1;
+            string viewMarkup = "";
+            if (model != null)
+            {
+                string currentUserId = User.Identity.GetUserId();
+                string groupPhotoUrl = "";
+                var companionsId = model.Contacts.Where(x => x.Selected).Select(x => x.CompanionId).ToList();
+                dialogueId = _groupWorker.CreateGroupDialogue(currentUserId, companionsId, model.GroupName, groupPhotoUrl);
+
+                var dialogueModel = _groupWorker.GetById(dialogueId);
+                viewMarkup = RazorHelper.RenderRazorViewToString(this, "GroupListItem", dialogueModel);
+            }
+            return Json(new { success = dialogueId == -1, createdDialogueId = dialogueId, htmlMarkup = viewMarkup });
+        }
+
+        public ActionResult GetGroups()
+        {
+            string currentUserId = User.Identity.GetUserId();
+            var groups = _groupWorker.GetGroups(currentUserId);
+            return PartialView("GroupList", groups);
         }
 
         protected override void Dispose(bool disposing)
@@ -89,6 +137,8 @@ namespace WebChat.Controllers
             _dialogueWorker.Dispose();
             _messageWorker.Dispose();
             _contactWorker.Dispose();
+            _groupWorker.Dispose();
+
             base.Dispose(disposing);
         }
     }

@@ -1,0 +1,47 @@
+﻿@model WebChat.Models.Contact.ModalContactListModel
+
+@{
+    Layout = null;
+}
+
+
+@if (Model == null)
+{
+    return;
+}
+
+@using (Html.BeginForm(null, null, FormMethod.Get, new { name = "group-contact-form", id = "group-contact-form" }))
+{
+    <div class="form-group">
+        <div class="col-md-12" style="padding: 5px 30px;">
+            @Html.TextBoxFor(x=>x.GroupName, new { @id = "group-name", @class="form-control", @placeholder="Group name", @style="max-width: 100%;"})
+        </div>
+    </div>
+
+
+    for (int i = 0; i < Model.Contacts.Count; i++)
+    {
+        <div class="row user-contact group-contact">
+            @Html.HiddenFor(x => Model.Contacts[i].CompanionId)
+            @Html.HiddenFor(x => Model.Contacts[i].ContactId)
+            @Html.CheckBoxFor(x => Model.Contacts[i].Selected, new { @class = "selected hidden" })
+            <div class="col-md-2 contact-icon">
+                @{
+                    string imagePath = Model.Contacts[i].Confirmed ? (Model.Contacts[i].ContactPhotoUrl ?? @"/Content/Images/avatar-default.png") : @"/Content/Images/avatar-unknown.png";
+                    <img src="@imagePath" class="avatar" />
+                }
+            </div>
+            <div class="col-md-9 contact-name">
+                <span class="contact-name-text col-md-6">@Model.Contacts[i].CompanionName</span>
+            </div>
+            <hr />
+        </div>
+                        }
+                    }
+<script>
+    $('.group-contact').on('click', function () {
+        $(this).toggleClass('contact-selected');
+        var checkbox = $(this).find('.selected');
+        checkbox.prop("checked", !checkbox.prop("checked"));
+    });
+</script>
