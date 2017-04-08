@@ -67,10 +67,10 @@ namespace WebChat.Controllers
                 int hashCode = DialogueWorker.GetDialogueHashCode(currentUserId, companionId);
                 int? dbDialogueId = _dialogueWorker.GetDialogueIdByHashCode(hashCode);
 
-                if (dbDialogueId == null)
-                {
-                    dialId = _dialogueWorker.CreatePersonalDialogue(currentUserId, companionId);
-                }
+                dialId = dbDialogueId == null 
+                    ? _dialogueWorker.CreatePersonalDialogue(currentUserId, companionId) 
+                    : (int)dbDialogueId;
+                
             }
             else if (!String.IsNullOrEmpty(dialogueId))
             {
@@ -108,7 +108,7 @@ namespace WebChat.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateGroup(ModalContactListModel model)
+        public JsonResult CreateGroup(ModalContactListModel model)
         {
             int dialogueId = -1;
             string viewMarkup = "";
@@ -121,8 +121,9 @@ namespace WebChat.Controllers
 
                 var dialogueModel = _groupWorker.GetById(dialogueId);
                 viewMarkup = RazorHelper.RenderRazorViewToString(this, "GroupListItem", dialogueModel);
+                return Json(new { success = true, createdDialogueId = dialogueId, htmlMarkup = viewMarkup });
             }
-            return Json(new { success = dialogueId == -1, createdDialogueId = dialogueId, htmlMarkup = viewMarkup });
+            return Json(new { success = false });
         }
 
         public ActionResult GetGroups()

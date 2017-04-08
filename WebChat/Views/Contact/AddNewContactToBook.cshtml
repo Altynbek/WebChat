@@ -4,7 +4,7 @@
 }
 @model WebChat.Models.Contact.NewContactModel
 
-@Scripts.Render("~/bundles/jqueryval")
+@*@Scripts.Render("~/bundles/jqueryval")*@
 
 @using (Ajax.BeginForm("AddNewContact", "Contact", new AjaxOptions() { HttpMethod = "post", OnSuccess = "CheckResult"}))
 {

@@ -26,13 +26,6 @@ namespace WebChat.Controllers
             return View(model);
         }
 
-        //public ActionResult Groups()
-        //{
-        //    GroupListModel model = _groupWorker.GetGroups(User.Identity.GetUserId());
-
-        //    return PartialView(model);
-        //}
-
         protected override void Dispose(bool disposing)
         {
             _contactWorker.Dispose();

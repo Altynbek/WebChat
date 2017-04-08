@@ -90,6 +90,12 @@ namespace WebChat.Controllers
             return PartialView("ModalContactList", model);
         }
 
+        public ActionResult GetContacts()
+        {
+            var model = _contactWorker.GetContacts(User.Identity.GetUserId());
+            return PartialView("~/Views/Shared/Contact/ContactList.cshtml", model);
+        }
+
         protected override void Dispose(bool disposing)
         {
             _contactRepository.Dispose();

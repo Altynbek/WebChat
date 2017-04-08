@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace WebChat.Models.Contact
 {
@@ -10,5 +11,10 @@ namespace WebChat.Models.Contact
         }
 
         public List<ContactModel> Contacts { get; set; }
+
+        internal object Select()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

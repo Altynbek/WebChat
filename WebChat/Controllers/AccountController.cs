@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using WebChat.Classes.Db.Structure;
 using WebChat.Classes.DB.Repositories;
+using WebChat.Classes.Worker;
 using WebChat.Models;
 using WebChat.Models.Account;
 
@@ -31,6 +32,16 @@ namespace WebChat.Controllers
             {
                 return HttpContext.GetOwinContext().Authentication;
             }
+        }
+
+        private ContactWorker _contactWorker;
+        private UserRepository _userRepository;
+
+        public AccountController()
+        {
+            var context = new DbContext();
+            _contactWorker = new ContactWorker(context);
+            _userRepository = new UserRepository(context);
         }
 
         [HttpGet]
@@ -111,17 +122,23 @@ namespace WebChat.Controllers
 
         public ActionResult FindUsers(string searchedString)
         {
-            using (var context = new DbContext())
+            string currentUserId = User.Identity.GetUserId();
+            var existedContactsId = _contactWorker.GetContacts(currentUserId).Contacts.Select(x => x.ContactId);
+            var dbUsers = _userRepository.SearchFor(e => e.UserName.Contains(searchedString) && !existedContactsId.Contains(e.Id)).ToList();
+
+            var model = new SearchedContactListModel();
+            foreach (var dbUser in dbUsers)
             {
-                var repository = new UserRepository(context);
-                var dbUsers = repository.SearchFor(e => e.UserName.Contains(searchedString)).ToList();
-                var model = new SearchedContactListModel();
-                foreach (var dbUser in dbUsers)
-                {
-                    model.Contacts.Add(new SearchedContactModel() { Id = dbUser.Id, Name = dbUser.UserName, PhotoUrl = dbUser.PhotoUrl });
-                }
-                return PartialView(model);
+                model.Contacts.Add(new SearchedContactModel() { Id = dbUser.Id, Name = dbUser.UserName, PhotoUrl = dbUser.PhotoUrl });
             }
+            return PartialView(model);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _contactWorker.Dispose();
+            _userRepository.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace WebChat.Classes.DB.Repositories
 
         public DbUserContact GetByUserId(string userId)
         {
-            var dbContact = _context.UserContacts.SingleOrDefault(x=>x.ContactId == userId);
+            var dbContact = _context.UserContacts.FirstOrDefault(x=>x.ContactId == userId);
             return dbContact;
         }
 
