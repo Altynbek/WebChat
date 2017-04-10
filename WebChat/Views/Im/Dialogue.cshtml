@@ -5,6 +5,9 @@
     Layout = null;
 }
 
+<script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script src="~/Scripts/SignalR/util.js"></script>
 
 <div class="row">
     <img src="@Model.PhotoUrl" class="avatar" style="width:40px; height: 40px" />
@@ -55,11 +58,23 @@ else
 <script>
     autosize(document.querySelectorAll('textarea'));
 
-    $("#message-box").keypress(function (e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            ProcessMessage();
-        }
-    });
+    $(function () {
+        $.connection.hub.start().done(function () {
+            var chat = $.connection.webChatHub;
+            $("#message-box").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    ProcessMessage();
+                    NotifyCompanions();
+                }
+            });
 
+            function NotifyCompanions() {
+                var msg = $('#message-box').val();
+                var companionId = $('#companionId').val();
+                var senderUserId = '@User.Identity.GetUserId()';
+                chat.server.updatePersonalDialogue(companionId, msg, senderUserId);
+            }
+        });
+    });
 </script>

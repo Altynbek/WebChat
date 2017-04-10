@@ -3,6 +3,8 @@
 }
 
 @model WebChat.Models.Contact.ContactListModel
+@using Microsoft.AspNet.Identity;
+
 
 <div class="header-whitespace" style="height: 20px;"></div>
 <div class="row">
@@ -54,7 +56,7 @@
         </div>
     </div>
 </div>
-
+@Html.Hidden("currentUserId", User.Identity.GetUserId(), new { @id = "currentUserId"})
 @Scripts.Render("~/bundles/jqueryval")
 
 
@@ -266,13 +268,6 @@
 </script>
 
 <script>
-    $("#message-box").keypress(function (e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            ProcessMessage();
-        }
-    });
-
     function ClearMessageBox() {
         $('#message-box').val("");
         autosize.update(document.querySelector('textarea'));
@@ -296,8 +291,7 @@
             }
         });
     }
-
-
+    
     function PushMessage(message) {
         const messageList = document.getElementById('message-list');
         var shouldScroll = messageList.scrollTop + messageList.clientHeight === messageList.scrollHeight;
@@ -366,6 +360,7 @@
             }
         });
     });
+
 </script>
 
 

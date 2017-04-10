@@ -52,6 +52,19 @@ namespace WebChat.Classes.DB.Repositories
             _context.SaveChanges();
         }
 
+        public Dictionary<int, bool> GetDialogueStatuses(List<int> userDialoguesId, string currentUserId)
+        {
+            var dialogueStatus = new Dictionary<int, bool>();
+            var unreadedMessages = _context.Messages.Where(x => x.IsReaded == false && x.CreatorId != currentUserId && userDialoguesId.Contains(x.DialogueId)).ToList();
+            foreach(var dialogueId in userDialoguesId)
+            {
+                bool contains  = unreadedMessages.Any(x => x.DialogueId == dialogueId);
+                dialogueStatus.Add(dialogueId, contains);
+            }
+
+            return dialogueStatus;
+        }
+
         public IQueryable<DbUserDialogue> SearchFor(Expression<Func<DbUserDialogue, bool>> predicate)
         {
             return _context.UserDialogues.Where(predicate);

@@ -8,7 +8,7 @@
 
 @foreach (var contact in Model.Contacts)
 {
-    <div class="row user-contact" onclick="StartDialogue(this)"
+    <div class="row user-contact" onclick="StartDialogue(this)" id="companion-@contact.ContactId"
          data-contact-id="@contact.Id" data-name="@contact.ContactName" data-confirmed="@contact.Confirmed" data-has-new-message="@contact.HasNewMessages">
         <div class="col-md-2 contact-icon">
             @{
@@ -19,10 +19,15 @@
         </div>
         <div class="col-md-10 contact-name">
             <span class="contact-name-text col-md-6">@contact.ContactName</span>
-            @if (contact.HasNewMessages)
-            {
-                <span class="glyphicon glyphicon-tint new-message col-md-offset-5"></span>
+            @{ 
+                string hiddenClass = "";
+
+                if (!contact.HasNewMessages)
+                {
+                    hiddenClass = " hidden ";
+                }
             }
+            <span class="glyphicon glyphicon-tint new-message col-md-offset-5 @hiddenClass"></span>
         </div>
         <hr />
     </div>

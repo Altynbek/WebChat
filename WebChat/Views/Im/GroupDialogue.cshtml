@@ -1,9 +1,13 @@
 ﻿@model WebChat.Models.Im.GroupDialogueInfoModel
+@using Microsoft.AspNet.Identity;
 @Scripts.Render("~/bundles/autosize")
 @{
     Layout = null;
 }
 
+<script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script src="~/Scripts/SignalR/util.js"></script>
 
 <div class="row">
     @{
@@ -12,6 +16,17 @@
     <img src="@imageUrl" class="avatar" style="width:40px; height: 40px" />
     <h3 style="display: inline-block">@Model.Name</h3>
 </div>
+<hr />
+
+    @{
+        string str = "";
+        foreach (var comp in Model.Companions)
+        {
+            str += comp + ", ";
+        }
+    }
+
+<h5> <span style="font-weight: bold;">Participants: </span> @str</h5>
 <hr />
 
 @Html.Hidden("dialogueId", Model.DialogueId, new { @id = "dialogueId" })
@@ -38,10 +53,24 @@
 <script>
     autosize(document.querySelectorAll('textarea'));
 
-    $("#message-box").keypress(function (e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
-            ProcessMessage();
-        }
+    $(function () {
+        $.connection.hub.start().done(function () {
+            var chat = $.connection.webChatHub;
+            $("#message-box").keypress(function (e) {
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    ProcessMessage();
+                    NotifyCompanions();
+                }
+            });
+
+            function NotifyCompanions() {
+                var msg = $('#message-box').val();
+                var dialogueId = $('#dialogueId').val();
+                var senderUserId = '@User.Identity.GetUserId()';
+                chat.server.updateGroupDialogue(dialogueId, msg, senderUserId);
+            }
+        });
     });
+
 </script>

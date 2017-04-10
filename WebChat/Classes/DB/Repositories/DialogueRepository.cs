@@ -85,8 +85,11 @@ namespace WebChat.Classes.DB.Repositories
 
         public List<string> GetDialogueCompanions(int dialogueId)
         {
+            var companions = new List<string>();
             var dbUsersId = _context.UserDialogues.Where(x => x.DialogueId == dialogueId).Select(x => x.UserId).ToList();
-            return dbUsersId;
+            var dbUsers = _context.Users.Where(x => dbUsersId.Contains(x.Id)).ToList();
+            companions.AddRange(dbUsers.Select(x => x.UserName).ToList());
+            return companions;
         }
     }
 }

@@ -75,7 +75,7 @@ namespace WebChat.Classes.DB.Repositories
 
         public int MarkMessagesAsReaded(int dialogueId, string recipientId)
         {
-            var messages = _context.Messages.Where(x => x.DialogueId == dialogueId && x.CreatorId != recipientId).ToList();
+            var messages = _context.Messages.Where(x => x.DialogueId == dialogueId && x.CreatorId != recipientId && !x.IsReaded ).ToList();
             foreach(var msg in messages)
             {
                 msg.IsReaded = true;

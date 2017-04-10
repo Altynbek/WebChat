@@ -103,8 +103,8 @@ namespace WebChat.Controllers
         public JsonResult MarkDialogueAsReaded(string dialogueId)
         {
             var currentUserId = User.Identity.GetUserId();
-            int updateRecordsCount = _messageWorker.MarkMessagesAsReaded(int.Parse(dialogueId), currentUserId);
-            return Json(new { success = updateRecordsCount > 0 }, JsonRequestBehavior.AllowGet);
+            _messageWorker.MarkMessagesAsReaded(int.Parse(dialogueId), currentUserId);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

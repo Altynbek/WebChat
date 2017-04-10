@@ -1,10 +1,10 @@
-﻿@{ 
+﻿@{
     Layout = null;
 }
 
 @model WebChat.Models.Home.GroupListModel
 
-@if(Model == null)
+@if (Model == null)
 {
     return;
 }
@@ -22,9 +22,13 @@
         </div>
         <div class="col-md-10 contact-name">
             <span class="contact-name-text col-md-6">@group.Name</span>
-            @if (group.HasNewMessages)
-            {
-                <span class="glyphicon glyphicon-tint new-message col-md-offset-5"></span>
+            @{
+                string hiddenClass = "";
+                if (!group.HasNewMessages)
+                {
+                    hiddenClass = " hidden ";
+                }
+                <span class="glyphicon glyphicon-tint new-message col-md-offset-5 @hiddenClass"></span>
             }
         </div>
         <hr />

@@ -16,11 +16,14 @@ namespace WebChat.Classes.Worker
 
         private readonly UserDialogueRepository _userDialogueRepository = null;
         private readonly DialogueRepository _dialogueRepository = null;
+        private readonly MessageRepository _messageRepository = null;
+
 
         public GroupWorker(DbContext context)
         {
             _dialogueRepository = new DialogueRepository(context);
             _userDialogueRepository = new UserDialogueRepository(context);
+            _messageRepository = new MessageRepository(context);
         }
 
 
@@ -34,17 +37,20 @@ namespace WebChat.Classes.Worker
             var dbUserDialogues = _userDialogueRepository.SearchFor(x => x.UserId == userId).ToList();
             var userDialoguesId = dbUserDialogues.Select(x => x.DialogueId).ToList();
             var dbUserGroupDialogues = _dialogueRepository.SearchFor(x => x.IsMultyUser == true && userDialoguesId.Contains(x.Id)).ToList();
+            var dialoguesStatuses = _userDialogueRepository.GetDialogueStatuses(userDialoguesId, userId);
 
-            foreach(var groupDialogue in dbUserGroupDialogues)
+            foreach (var groupDialogue in dbUserGroupDialogues)
             {
                 var companionsId = _userDialogueRepository.SearchFor(x => x.DialogueId == groupDialogue.Id).Select(x=>x.UserId).ToList();
+                bool hasNewMessages = dialoguesStatuses[groupDialogue.Id];
                 GroupModel m = new GroupModel()
                 {
                     DialogueId = groupDialogue.Id,
                     Name = groupDialogue.Name,
                     PhotoUrl = groupDialogue.PhotoUrl,
                     RecentActivityDate = groupDialogue.RecentActivityDate,
-                    CompanionsId = companionsId
+                    CompanionsId = companionsId,
+                    HasNewMessages = hasNewMessages
                 };
 
                 groupList.Groups.Add(m);
@@ -145,6 +151,7 @@ namespace WebChat.Classes.Worker
         {
             _userDialogueRepository.Dispose();
             _dialogueRepository.Dispose();
+            _messageRepository.Dispose();
         }
     }
 }
