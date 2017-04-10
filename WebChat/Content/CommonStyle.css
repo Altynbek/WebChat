@@ -1,0 +1,92 @@
+﻿.centered {
+    margin: 0px auto;
+    display: block;
+}
+
+#btnCommonSearch {
+    margin-bottom: 10px;
+}
+
+.avatar {
+    height: 32px;
+    width: 32px;
+    margin: 3px;
+}
+
+#contact-list {
+    margin-top: 32px;
+}
+
+.contact-name {
+    padding: 12px 20px;
+}
+
+.contact-name-text {
+    font-style: italic;
+    font-weight: bold;
+    font-size: 12pt;
+}
+
+.contact-name {
+    pointer-events: auto;
+}
+
+.row.user-contact {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.user-contact:hover {
+    background-color: lavender;
+}
+
+.contact-selected {
+    background-color: lavender;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#message-list {
+    height: 200px;
+    max-height: 250px;
+    /*overflow-y: scroll;*/
+    overflow: auto;
+}
+
+#message-box {
+    max-height: 300px;
+    overflow: hidden;
+    word-wrap: break-word;
+    resize: none;
+    height: 60px;
+    margin-top: 20px;
+}
+
+textarea {
+    padding: 10px;
+    vertical-align: top;
+    width: 200px;
+}
+
+    textarea:focus {
+        outline-style: solid;
+        outline-width: 2px;
+    }
+
+.new-message {
+    color: orangered;
+}
+
+#group-list {
+    margin-top: 10px;
+}
+
+#btn-create-group {
+    margin-top: 20px;
+}
+
+.input-validation-error {
+    border-color: red;
+}
