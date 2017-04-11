@@ -55,7 +55,7 @@ namespace WebChat.Controllers
         {
             if (ModelState.IsValid)
             {
-                string photoUrl = "/Content/Images/" + model.UserPhoto == null ? "avatar-default.png" : model.UserPhoto.FileName;
+                string photoUrl = "/Content/Images/" + (model.UserPhoto == null ? "avatar-default.png" : model.UserPhoto.FileName);
                 var user = new DbUser() { Email = model.Email, UserName = model.Name, PhotoUrl = photoUrl };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

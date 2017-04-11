@@ -21,14 +21,9 @@ namespace WebChat.Classes.Db.Structure
 
         public string PhotoUrl { get; set; }
 
-        //public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<DbUser> manager)
-        //{
-        //    // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
-        //    var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
-        //    userIdentity.id
-        //    // Add custom user claims here
-        //    return userIdentity;
-        //}
-
+        public string UserId
+        {
+            get { return Id; }
+        }
     }
 }

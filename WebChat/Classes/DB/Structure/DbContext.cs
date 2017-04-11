@@ -16,8 +16,6 @@ namespace WebChat.Classes.Db.Structure
 
         public DbSet<DbUserContact> UserContacts { get; set; }
 
-        //public DbSet<DbClaim> UserClaims { get; set; }
-
         public static DbContext Create()
         {
             return new DbContext();
